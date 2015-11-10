@@ -132,7 +132,7 @@ func (fake *FakeSession) GetJSON(url string) ([]byte, error) {
 	case "/users.json":
 		data = []byte(usersPage1)
 	default:
-		data = []byte("")
+		data = []byte("[]")
 	}
 	return data, nil
 }

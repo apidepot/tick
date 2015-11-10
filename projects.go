@@ -53,7 +53,7 @@ func GetOpenProjectsOnPage(tickData JSONGetter, page int) (Projects, error) {
 	if err != nil {
 		return nil, err
 	}
-	if bytes.Equal(data, []byte("")) {
+	if bytes.Equal(data, []byte("[]")) {
 		return nil, nil
 	}
 	err = json.Unmarshal(data, &projects)
