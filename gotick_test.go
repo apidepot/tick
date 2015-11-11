@@ -115,6 +115,77 @@ const (
     "updated_at": "2015-05-22T09:58:05.000-04:00"
   }
 ]`
+
+	tasksPage1 = `[
+  {
+    "id": 6464641,
+    "name": "Meetings",
+    "budget": null,
+    "position": 1,
+    "project_id": 1111111,
+    "date_closed": null,
+    "billable": true,
+    "url": "https://www.tickspot.com/22222/api/v2/tasks/6464641.json",
+    "created_at": "2014-09-18T12:59:09.000-04:00",
+    "updated_at": "2014-09-18T12:59:09.000-04:00"
+  },
+  {
+    "id": 6464642,
+    "name": "Design",
+    "budget": null,
+    "position": 18,
+    "project_id": 1111111,
+    "date_closed": null,
+    "billable": true,
+    "url": "https://www.tickspot.com/22222/api/v2/tasks/6464642.json",
+    "created_at": "2014-08-26T18:39:23.000-04:00",
+    "updated_at": "2014-08-26T18:39:23.000-04:00"
+  },
+  {
+    "id": 6464643,
+    "name": "Test",
+    "budget": null,
+    "position": 18,
+    "project_id": 1111111,
+    "date_closed": null,
+    "billable": true,
+    "url": "https://www.tickspot.com/22222/api/v2/tasks/6464643.json",
+    "created_at": "2015-09-29T13:29:28.000-04:00",
+    "updated_at": "2015-09-29T13:29:28.000-04:00"
+  }
+]`
+
+	singleTask = `{
+  "id": 25,
+  "name": "Design",
+  "budget": null,
+  "position": 7,
+  "project_id": 1111111,
+  "date_closed": "2015-10-08",
+  "billable": true,
+  "created_at": "2015-09-21T11:56:20.000-04:00",
+  "updated_at": "2015-10-08T14:18:00.000-04:00",
+  "total_hours": 36.0,
+  "entries": {
+    "count": 7,
+    "url": "https://www.tickspot.com/22222/api/v2/tasks/25/entries.json",
+    "updated_at": "2015-10-02T12:04:17.000-04:00"
+  },
+  "project": {
+    "id": 1111111,
+    "name": "P.001 First Project",
+    "budget": null,
+    "date_closed": null,
+    "notifications": false,
+    "billable": true,
+    "recurring": false,
+    "client_id": 222244,
+    "owner_id": 222243,
+    "url": "https://www.tickspot.com/22222/api/v2/projects/1111111.json",
+    "created_at": "2015-05-18T10:51:45.000-04:00",
+    "updated_at": "2015-05-18T10:51:45.000-04:00"
+  }
+}`
 )
 
 type FakeSession struct {
@@ -131,6 +202,12 @@ func (fake *FakeSession) GetJSON(url string) ([]byte, error) {
 		data = []byte(projectsPage2)
 	case "/users.json":
 		data = []byte(usersPage1)
+	case "/tasks.json":
+		data = []byte(tasksPage1)
+	case "/tasks.json?page=1":
+		data = []byte(tasksPage1)
+	case "/tasks/25.json":
+		data = []byte(singleTask)
 	default:
 		data = []byte("[]")
 	}

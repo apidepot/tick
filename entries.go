@@ -7,15 +7,15 @@ import (
 )
 
 type Entry struct {
-	ID        uint    `json:"id"`
-	Date      string  `json:"date"`
-	Hours     float64 `json:"hours"`
-	Notes     string  `json:"notes"`
-	TaskID    uint    `json:"task_id"`
-	UserID    uint    `json:"user_id"`
-	URL       string  `json:"url"`
-	CreatedAt string  `json:"created_at"`
-	UpdatedAt string  `json:"updated_at"`
+	ID        uint     `json:"id"`
+	Date      TickDate `json:"date"`
+	Hours     float64  `json:"hours"`
+	Notes     string   `json:"notes"`
+	TaskID    uint     `json:"task_id"`
+	UserID    uint     `json:"user_id"`
+	URL       string   `json:"url"`
+	CreatedAt string   `json:"created_at"`
+	UpdatedAt string   `json:"updated_at"`
 }
 
 type Entries []Entry
@@ -52,7 +52,7 @@ func GetEntriesBetweenDatesOnPage(tickData JSONGetter, startDate, endDate string
 	if err != nil {
 		return nil, err
 	}
-	if bytes.Equal(data, []byte("")) || bytes.Equal(data, []byte("[]")) {
+	if bytes.Equal(data, []byte("[]")) {
 		return nil, nil
 	}
 	err = json.Unmarshal(data, &entries)

@@ -36,10 +36,8 @@ func (tickSession *TickSession) GetJSON(url string) ([]byte, error) {
 	log.Printf("URL: %s", fullURL)
 	req, err := http.NewRequest("GET", fullURL, nil)
 	apiTokenString := fmt.Sprintf("Token token=%s", tickSession.APIToken)
-	log.Printf("Using API Token String: %s", apiTokenString)
 	req.Header.Add("Authorization", apiTokenString)
 	req.Header.Add("User-Agent", tickSession.UserAgent)
-	log.Printf("Header = %v", req.Header)
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatalln("Problem with GET request: %s", err)
