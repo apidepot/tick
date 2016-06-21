@@ -62,3 +62,20 @@ func GetOpenProjectsOnPage(tickData JSONGetter, page int) (Projects, error) {
 	}
 	return projects, nil
 }
+
+func GetProject(tickData JSONGetter, projectID int) (Project, error) {
+	var project Project
+	url := fmt.Sprintf("/projects/%d.json", projectID)
+	data, err := tickData.GetJSON(url)
+	if err != nil {
+		return Project{}, err
+	}
+	if bytes.Equal(data, []byte("[]")) {
+		return Project{}, nil
+	}
+	err = json.Unmarshal(data, &project)
+	if err != nil {
+		return Project{}, err
+	}
+	return project, nil
+}

@@ -3,7 +3,7 @@ package gotick
 import (
 	"testing"
 
-	. "github.com/smartystreets/goconvey/convey"
+	c "github.com/smartystreets/goconvey/convey"
 )
 
 const (
@@ -215,17 +215,17 @@ func (fake *FakeSession) GetJSON(url string) ([]byte, error) {
 }
 
 func TestCreatingNewTickSession(t *testing.T) {
-	Convey("Given I want to create a new Tick session", t, func() {
-		Convey("When the NewTickSession is called with valid variables", func() {
+	c.Convey("Given I want to create a new Tick session", t, func() {
+		c.Convey("When the NewTickSession is called with valid variables", func() {
 			tick, _ := NewTickSession("mytoken", "subID", "thisUserAgent")
-			Convey("The session should contain the APIToken", func() {
-				So(tick.APIToken, ShouldEqual, "mytoken")
+			c.Convey("The session should contain the APIToken", func() {
+				c.So(tick.APIToken, c.ShouldEqual, "mytoken")
 			})
-			Convey("The session should contain the SubscriptionID", func() {
-				So(tick.SubscriptionID, ShouldEqual, "subID")
+			c.Convey("The session should contain the SubscriptionID", func() {
+				c.So(tick.SubscriptionID, c.ShouldEqual, "subID")
 			})
-			Convey("The session should contain the UserAgent", func() {
-				So(tick.UserAgent, ShouldEqual, "thisUserAgent")
+			c.Convey("The session should contain the UserAgent", func() {
+				c.So(tick.UserAgent, c.ShouldEqual, "thisUserAgent")
 			})
 		})
 	})
