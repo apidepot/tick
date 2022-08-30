@@ -1,5 +1,5 @@
-// Copyright (c) 2016 The gotick developers. All rights reserved.
-// Project site: https://github.com/questrail/gotick
+// Copyright (c) 2016-2022 The tick developers. All rights reserved.
+// Project site: https://github.com/apidepot/tick
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
 
@@ -41,7 +41,7 @@ func GetOpenProjects(tickData JSONGetter) (Projects, error) {
 		if err != nil {
 			return nil, err
 		}
-		if projects == Projects(nil) {
+		if projects == nil {
 			foundLastPage = true
 		} else {
 			allProjects = append(allProjects, projects...)

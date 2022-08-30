@@ -1,5 +1,5 @@
-// Copyright (c) 2016 The gotick developers. All rights reserved.
-// Project site: https://github.com/questrail/gotick
+// Copyright (c) 2016-2022 The tick developers. All rights reserved.
+// Project site: https://github.com/apidepot/tick
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
 
@@ -7,7 +7,7 @@ package gotick
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 )
@@ -40,17 +40,16 @@ func (tickSession *TickSession) GetJSON(url string) ([]byte, error) {
 	)
 	log.Printf("URL: %s", fullURL)
 	req, err := http.NewRequest("GET", fullURL, nil)
+	if err != nil {
+		return nil, err
+	}
 	apiTokenString := fmt.Sprintf("Token token=%s", tickSession.APIToken)
 	req.Header.Add("Authorization", apiTokenString)
 	req.Header.Add("User-Agent", tickSession.UserAgent)
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatalln("Problem with GET request: %s", err)
+		return nil, err
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalln("Problem reading body response: %s", err)
-	}
-	return body, nil
+	return io.ReadAll(resp.Body)
 }

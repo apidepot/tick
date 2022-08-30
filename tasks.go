@@ -1,5 +1,5 @@
-// Copyright (c) 2016 The gotick developers. All rights reserved.
-// Project site: https://github.com/questrail/gotick
+// Copyright (c) 2016-2022 The tick developers. All rights reserved.
+// Project site: https://github.com/apidepot/tick
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
 
@@ -38,7 +38,7 @@ func GetOpenTasks(tickData JSONGetter) (Tasks, error) {
 		if err != nil {
 			return nil, err
 		}
-		if tasks == Tasks(nil) {
+		if tasks == nil {
 			foundLastPage = true
 		} else {
 			allTasks = append(allTasks, tasks...)
@@ -77,5 +77,5 @@ func GetTask(tickData JSONGetter, id int) (Task, error) {
 		return Task{}, nil
 	}
 	err = json.Unmarshal(data, &task)
-	return task, nil
+	return task, err
 }
