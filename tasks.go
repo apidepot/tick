@@ -3,11 +3,10 @@
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
 
-package gotick
+package tick
 
 import (
-	"bytes"
-	"encoding/json"
+	"context"
 	"fmt"
 )
 
@@ -29,12 +28,27 @@ type Task struct {
 
 type Tasks []Task
 
-func GetOpenTasks(tickData JSONGetter) (Tasks, error) {
+type TaskStatus int
+
+const (
+	OpenTasks TaskStatus = iota
+	ClosedTasks
+)
+
+// GetTask uses Tick's API to return a specific Task identified by its ID.
+func (c Client) GetTask(ctx context.Context, id int) (Task, error) {
+	var task Task
+	path := fmt.Sprintf("/tasks/%d.json", id)
+	err := c.get(ctx, path, &task)
+	return task, err
+}
+
+func (c Client) GetTasks(ctx context.Context, status TaskStatus) (Tasks, error) {
 	var allTasks Tasks
 	foundLastPage := false
 	currentPage := 1
 	for !foundLastPage {
-		tasks, err := GetOpenTasksOnPage(tickData, currentPage)
+		tasks, err := c.getTasksOnPage(ctx, status, currentPage)
 		if err != nil {
 			return nil, err
 		}
@@ -48,34 +62,15 @@ func GetOpenTasks(tickData JSONGetter) (Tasks, error) {
 	return allTasks, nil
 }
 
-func GetOpenTasksOnPage(tickData JSONGetter, page int) (Tasks, error) {
+func (c Client) getTasksOnPage(ctx context.Context, status TaskStatus, page int) (Tasks, error) {
+	var path string
+	switch status {
+	case OpenTasks:
+		path = fmt.Sprintf("/tasks.json?page=%d", page)
+	case ClosedTasks:
+		path = fmt.Sprintf("/tasks/closed.json?page=%d", page)
+	}
 	var tasks Tasks
-	url := fmt.Sprintf("/tasks.json?page=%d", page)
-	data, err := tickData.GetJSON(url)
-	if err != nil {
-		return nil, err
-	}
-	if bytes.Equal(data, []byte("[]")) {
-		return nil, nil
-	}
-	err = json.Unmarshal(data, &tasks)
-	if err != nil {
-		return nil, err
-	}
-	return tasks, nil
-}
-
-// GetTask uses Tick's API to return a specific Task identified by its ID.
-func GetTask(tickData JSONGetter, id int) (Task, error) {
-	var task Task
-	url := fmt.Sprintf("/tasks/%d.json", id)
-	data, err := tickData.GetJSON(url)
-	if err != nil {
-		return Task{}, err
-	}
-	if bytes.Equal(data, []byte("[]")) {
-		return Task{}, nil
-	}
-	err = json.Unmarshal(data, &task)
-	return task, err
+	err := c.get(ctx, path, &tasks)
+	return tasks, err
 }

@@ -3,11 +3,10 @@
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
 
-package gotick
+package tick
 
 import (
-	"bytes"
-	"encoding/json"
+	"context"
 	"fmt"
 )
 
@@ -25,12 +24,26 @@ type Entry struct {
 
 type Entries []Entry
 
-func GetEntriesBetweenDates(tickData JSONGetter, startDate, endDate string) (Entries, error) {
+func (c Client) GetEntry(ctx context.Context, entryID int) (Entry, error) {
+	var entry Entry
+	path := fmt.Sprintf("/entries/%d.json", entryID)
+	err := c.get(ctx, path, &entry)
+	return entry, err
+}
+
+type EntryOptions struct {
+}
+
+func (c Client) GetEntries(ctx context.Context, options EntryOptions) (Entries, error) {
+	return nil, nil
+}
+
+func (c Client) getEntriesBetweenDates(ctx context.Context, startDate, endDate string) (Entries, error) {
 	var allEntries Entries
 	foundLastPage := false
 	currentPage := 1
 	for !foundLastPage {
-		entries, err := GetEntriesBetweenDatesOnPage(tickData, startDate, endDate, currentPage)
+		entries, err := c.getEntriesBetweenDatesOnPage(ctx, startDate, endDate, currentPage)
 		if err != nil {
 			return nil, err
 		}
@@ -44,39 +57,28 @@ func GetEntriesBetweenDates(tickData JSONGetter, startDate, endDate string) (Ent
 	return allEntries, nil
 }
 
-func GetEntriesBetweenDatesOnPage(tickData JSONGetter, startDate, endDate string, page int) (Entries, error) {
+func (c Client) getEntriesBetweenDatesOnPage(ctx context.Context, startDate, endDate string, page int) (Entries, error) {
 	var entries Entries
 	// /entries.json?start_date=2014-12-28&end_date=2015-01-24&page=15
-	url := fmt.Sprintf(
+	path := fmt.Sprintf(
 		"/entries.json?page=%d&start_date='%s'&end_date='%s'",
 		page,
 		startDate,
 		endDate,
 	)
-	data, err := tickData.GetJSON(url)
-	if err != nil {
-		return nil, err
-	}
-	if bytes.Equal(data, []byte("[]")) {
-		return nil, nil
-	}
-	err = json.Unmarshal(data, &entries)
-	if err != nil {
-		return nil, err
-	}
-	return entries, nil
+	err := c.get(ctx, path, &entries)
+	return entries, err
 }
 
-func GetProjectEntriesBetweenDates(
-	tickData JSONGetter, projectID uint, startDate, endDate string,
+func (c Client) getProjectEntriesBetweenDates(
+	ctx context.Context, projectID int, startDate, endDate string,
 ) (Entries, error) {
 	var allEntries Entries
 	foundLastPage := false
 	currentPage := 1
 	for !foundLastPage {
-		entries, err := GetProjectEntriesBetweenDatesOnPage(
-			tickData, projectID, startDate, endDate, currentPage,
-		)
+		entries, err := c.getProjectEntriesBetweenDatesOnPage(
+			ctx, projectID, startDate, endDate, currentPage)
 		if err != nil {
 			return nil, err
 		}
@@ -90,28 +92,18 @@ func GetProjectEntriesBetweenDates(
 	return allEntries, nil
 }
 
-func GetProjectEntriesBetweenDatesOnPage(
-	tickData JSONGetter, projectID uint, startDate, endDate string, page int,
+func (c Client) getProjectEntriesBetweenDatesOnPage(
+	ctx context.Context, projectID int, startDate, endDate string, page int,
 ) (Entries, error) {
 	var entries Entries
 	// /entries.json?start_date=2014-12-28&end_date=2015-01-24&page=15
-	url := fmt.Sprintf(
+	path := fmt.Sprintf(
 		"/projects/%d/entries.json?page=%d&start_date='%s'&end_date='%s'",
 		projectID,
 		page,
 		startDate,
 		endDate,
 	)
-	data, err := tickData.GetJSON(url)
-	if err != nil {
-		return nil, err
-	}
-	if bytes.Equal(data, []byte("[]")) {
-		return nil, nil
-	}
-	err = json.Unmarshal(data, &entries)
-	if err != nil {
-		return nil, err
-	}
-	return entries, nil
+	err := c.get(ctx, path, &entries)
+	return entries, err
 }

@@ -1,39 +1,76 @@
-# gotick
+# tick
 
-[![GoDoc][godoc image]][godoc link]
-[![License Badge][license image]][LICENSE.txt]
+Go-based client for [Tick's API][tick-api].
 
-Go-based client for [Tick][]'s API.
+[![GoDoc][godoc badge]][godoc link]
+[![Go Report Card][report badge]][report card]
+[![License Badge][license badge]][LICENSE]
+
+## Overview
+
+[tick][] provides a Go interface to the [Tick API v2][tick-api]. To
+access the [Tick API][tick-api] a subscription ID and API Token are required.
+
+## Installation
+
+```bash
+$ go get github.com/apidepot/tick
+```
 
 ## Contributing
 
-[gotick][] is developed using [Scott Chacon][]'s [GitHub Flow][].
-To contribute, fork [gotick][], create a feature branch, and then
-submit a [pull request][].  [GitHub Flow][] is summarized as:
+Contributions are welcome! To contribute please:
 
-- Anything in the `master` branch is deployable
-- To work on something new, create a descriptively named branch off of
-  `master` (e.g., `new-oauth2-scopes`)
-- Commit to that branch locally and regularly push your work to the same
-  named branch on the server
-- When you need feedback or help, or you think the branch is ready for
-  merging, open a [pull request][].
-- After someone else has reviewed and signed off on the feature, you can
-  merge it into master.
-- Once it is merged and pushed to `master`, you can and *should* deploy
-  immediately.
+1. Fork the repository
+2. Create a feature branch
+3. Code
+4. Submit a [pull request][]
+
+### Testing
+
+Prior to submitting a [pull request][], please run:
+
+```bash
+$ make check    # formats, vets, and unit tests the code
+$ make lint     # lints code using staticcheck
+```
+
+To update and view the test coverage report:
+
+```bash
+$ make cover
+```
+
+#### Integration Testing
+
+To perform the integration tests run:
+
+```bash
+$ make int
+```
+
+Prior to doing so, you'll need to create a `config_test.toml` file with your
+Tick Subscription ID and API Token.
+
+Example `config_test.toml` file:
+
+```toml
+SubscriptionID = "xxxxx"
+Token = "big-hex-string"
+```
+
 
 ## License
 
-[gotick][] is released under the MIT license.  Please see the
+[tick][] is released under the MIT license.  Please see the
 [LICENSE.txt][] file for more information.
 
-[GitHub Flow]: http://scottchacon.com/2011/08/31/github-flow.html
-[godoc image]: https://godoc.org/github.com/questrail/gotick?status.svg
-[godoc link]: https://godoc.org/github.com/questrail/gotick
-[gotick]: https://github.com/questrail/gotick
-[LICENSE.txt]: https://github.com/questrail/gotick/blob/master/LICENSE.txt
-[license image]: https://img.shields.io/badge/license-MIT-blue.svg
+[godoc badge]: https://godoc.org/github.com/apidepot/tick?status.svg
+[godoc link]: https://godoc.org/github.com/apidepot/tick
+[tick]: https://github.com/apidepot/tick
+[LICENSE.txt]: https://github.com/apidepot/tick/blob/master/LICENSE.txt
+[license badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [pull request]: https://help.github.com/articles/using-pull-requests
-[Scott Chacon]: http://scottchacon.com/about.html
-[tick]: https://www.tickspot.com
+[report badge]: https://goreportcard.com/badge/github.com/apidepot/tick
+[report card]: https://goreportcard.com/report/github.com/apidepot/tick
+[tick-api]: https://www.tickspot.com/api

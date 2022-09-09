@@ -3,65 +3,80 @@
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
 
-package gotick
+package tick
 
 import (
+	"context"
+	"net/http"
+	"net/http/httptest"
 	"testing"
-
-	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestGetOpenProjectsOnFirstPage(t *testing.T) {
-	Convey("Given I want to get the first page of open projects", t, func() {
-		Convey("When the /projects.json?page=1 URI receives a GET method\n"+
-			"And the header contains valid authorization",
-			func() {
-				var fake FakeSession
-				data, _ := GetOpenProjectsOnPage(&fake, 1)
-				Convey("It should return two projects", func() {
-					So(len(data), ShouldEqual, 2)
-				})
-				Convey("The first project ID should be 1111111", func() {
-					So(data[0].ID, ShouldEqual, 1111111)
-				})
-				Convey("The first project name should be P.001 First Project", func() {
-					So(data[0].Name, ShouldEqual, "P.001 First Project")
-				})
-				Convey("The second project ID should be 1111111", func() {
-					So(data[1].ID, ShouldEqual, 1111112)
-				})
-				Convey("The second project name should be P.001 First Project", func() {
-					So(data[1].Name, ShouldEqual, "P.002 Second Project")
-				})
-			})
-	})
+	server := serverMock()
+	defer server.Close()
+
+	c, err := NewClient("fakeToken", "fakeID", "my-user-agent",
+		WithBaseURL(server.URL),
+	)
+	if err != nil {
+		t.Errorf("expected new client err to be nil got %v", err)
+	}
+	res, err := c.GetProjects(context.Background(), OpenProjects)
+	if err != nil {
+		t.Errorf("expected response err to be nil got %v", err)
+	}
+	if len(res) != 2 {
+		t.Errorf("expected to receive two projects but only got %d", len(res))
+	}
+	if res[0].ID != 1111 {
+		t.Errorf("expected the first project to have a project ID of 1111 but got %d", res[0].ID)
+	}
 }
 
-func TestGetOpenProjectsOnSecondPage(t *testing.T) {
-	Convey("Given I want to get the third page of open projects", t, func() {
-		Convey("When the /projects.json?page=3 URI receives a GET method\n"+
-			"And the header contains valid authorization",
-			func() {
-				var fake FakeSession
-				data, _ := GetOpenProjectsOnPage(&fake, 3)
-				Convey("It should return no projects", func() {
-					expected := Projects(nil)
-					So(data, ShouldResemble, expected)
-				})
-			})
-	})
+func serverMock() *httptest.Server {
+	router := http.NewServeMux()
+	router.HandleFunc("/projects.json", handleOpenProjects)
+	router.HandleFunc("/projects/closed.json", handleClosedProjects)
+
+	srv := httptest.NewServer(router)
+	return srv
 }
 
-func TestGetOpenProjects(t *testing.T) {
-	Convey("Given I want to get the open projects", t, func() {
-		Convey("When the /projects.json receives a GET method\n"+
-			"And the header contains valid authorization",
-			func() {
-				var fake FakeSession
-				data, _ := GetOpenProjects(&fake)
-				Convey("It should return four open projects", func() {
-					So(len(data), ShouldEqual, 4)
-				})
-			})
-	})
+func handleOpenProjects(w http.ResponseWriter, r *http.Request) {
+	projectsPage1 := `[
+	{
+		"id":1111111,
+		"name":"P.001 First Project",
+		"budget":null,
+		"date_closed":null,
+		"notifications":false,
+		"billable":true,
+		"recurring":false,
+		"client_id":555555,
+		"owner_id":444444,
+		"url":"https://www.tickspot.com/22222/api/v2/projects/1111111.json",
+		"created_at":"2014-08-06T09:39:44.000-04:00",
+		"updated_at":"2014-08-26T18:19:31.000-04:00"
+	},
+	{
+		"id":1111112,
+		"name":"P.002 Second Project",
+		"budget":null,
+		"date_closed":null,
+		"notifications":false,
+		"billable":true,
+		"recurring":false,
+		"client_id":555555,
+		"owner_id":444444,
+		"url":"https://www.tickspot.com/22222/api/v2/projects/1111112.json",
+		"created_at":"2014-08-07T17:43:39.000-04:00",
+		"updated_at":"2014-08-13T12:22:35.000-04:00"
+	}
+]`
+	_, _ = w.Write([]byte(projectsPage1))
+}
+
+func handleClosedProjects(w http.ResponseWriter, r *http.Request) {
+	_, _ = w.Write([]byte("mock closed projects response"))
 }

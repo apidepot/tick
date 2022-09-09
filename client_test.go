@@ -3,7 +3,7 @@
 // Use of this source code is governed by a MIT-style license that
 // can be found in the LICENSE.txt file for the project.
 
-package gotick
+package tick
 
 import (
 	"testing"
@@ -193,44 +193,18 @@ const (
 }`
 )
 
-type FakeSession struct {
-}
-
-func (fake *FakeSession) GetJSON(url string) ([]byte, error) {
-	var data []byte
-	switch url {
-	case "/projects.json":
-		data = []byte(projectsPage1)
-	case "/projects.json?page=1":
-		data = []byte(projectsPage1)
-	case "/projects.json?page=2":
-		data = []byte(projectsPage2)
-	case "/users.json":
-		data = []byte(usersPage1)
-	case "/tasks.json":
-		data = []byte(tasksPage1)
-	case "/tasks.json?page=1":
-		data = []byte(tasksPage1)
-	case "/tasks/25.json":
-		data = []byte(singleTask)
-	default:
-		data = []byte("[]")
-	}
-	return data, nil
-}
-
 func TestCreatingNewTickSession(t *testing.T) {
-	c.Convey("Given I want to create a new Tick session", t, func() {
-		c.Convey("When the NewTickSession is called with valid variables", func() {
-			tick, _ := NewTickSession("mytoken", "subID", "thisUserAgent")
-			c.Convey("The session should contain the APIToken", func() {
-				c.So(tick.APIToken, c.ShouldEqual, "mytoken")
+	c.Convey("Given I want to create a new Tick API client", t, func() {
+		c.Convey("When the NewClient function is called with valid variables", func() {
+			tick, _ := NewClient("mytoken", "subID", "thisUserAgent")
+			c.Convey("The client should contain the APIToken", func() {
+				c.So(tick.apiToken, c.ShouldEqual, "mytoken")
 			})
-			c.Convey("The session should contain the SubscriptionID", func() {
-				c.So(tick.SubscriptionID, c.ShouldEqual, "subID")
+			c.Convey("The client should contain the SubscriptionID", func() {
+				c.So(tick.subscriptionID, c.ShouldEqual, "subID")
 			})
-			c.Convey("The session should contain the UserAgent", func() {
-				c.So(tick.UserAgent, c.ShouldEqual, "thisUserAgent")
+			c.Convey("The client should contain the UserAgent", func() {
+				c.So(tick.userAgent, c.ShouldEqual, "thisUserAgent")
 			})
 		})
 	})
