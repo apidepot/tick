@@ -24,7 +24,7 @@ type Project struct {
 	URL           string  `json:"url"`
 	CreatedAt     string  `json:"created_at"`
 	UpdatedAt     string  `json:"updated_at"`
-	TotalHours    float64 `json:"total_hours"`
+	TotalHours    float64 `json:"total_hours,omitempty"`
 }
 
 // FIXME(mdr): This should probably be a map[uint]Project using the Project.ID

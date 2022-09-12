@@ -128,18 +128,18 @@ func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
 		return nil, fmt.Errorf("error performing c.httpClient.Do: %w", err)
 	}
 	defer resp.Body.Close()
-	log.Printf("response = %s\n", resp.Body)
-	log.Println("here")
+	log.Printf("do response = %s\n", resp.Body)
 	err = json.NewDecoder(resp.Body).Decode(v)
 	return resp, err
 }
 
 func (c *Client) get(ctx context.Context, path string, v interface{}) error {
+	log.Printf("get path %s", path)
 	req, err := c.newRequest(ctx, "GET", path, nil)
 	if err != nil {
 		return fmt.Errorf("error creating get request for path %s: %w", path, err)
 	}
 
 	_, err = c.do(req, &v)
-	return fmt.Errorf("error performing get request: %w", err)
+	return err
 }
