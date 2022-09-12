@@ -2,6 +2,7 @@ help:
 	@echo "You can perform the following:"
 	@echo ""
 	@echo "  check         Format, vet, and unit test Go code"
+	@echo "  checkv        Verbosely format, vet, and unit test Go code"
 	@echo "  cover         Run & show test coverage in html"
 	@echo "  int           Run integration tests"
 	@echo "  int-cover     Run & show integration test coverage in html"
@@ -12,6 +13,12 @@ check:
 	go fmt ./...
 	go vet ./...
 	go test ./... -cover
+
+checkv:
+	@echo 'Verbosely formatting, vetting, and testing Go code'
+	go fmt ./...
+	go vet ./...
+	go test ./... -cover -v
 
 lint:
 	@echo 'Linting code using staticcheck'
