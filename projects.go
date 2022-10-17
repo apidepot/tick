@@ -8,6 +8,7 @@ package tick
 import (
 	"context"
 	"fmt"
+	"log"
 )
 
 // Project models a Tick project.
@@ -52,9 +53,10 @@ func (c Client) GetProjects(ctx context.Context, status ProjectStatus) (Projects
 	for !foundLastPage {
 		projects, err := c.getProjectsOnPage(ctx, status, currentPage)
 		if err != nil {
+			log.Printf("error getting projects on page %d", currentPage)
 			return nil, err
 		}
-		if projects == nil {
+		if len(projects) == 0 {
 			foundLastPage = true
 		} else {
 			allProjects = append(allProjects, projects...)

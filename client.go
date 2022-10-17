@@ -11,7 +11,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"time"
@@ -122,24 +121,19 @@ func (c *Client) newRequest(ctx context.Context, method, path string, body inter
 	return req, nil
 }
 
-func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("error performing c.httpClient.Do: %w", err)
-	}
-	defer resp.Body.Close()
-	log.Printf("do response = %s\n", resp.Body)
-	err = json.NewDecoder(resp.Body).Decode(v)
-	return resp, err
-}
-
+// get issues a GET to the specified path and decodes the JSON to the given
+// empty interface.
 func (c *Client) get(ctx context.Context, path string, v interface{}) error {
-	log.Printf("get path %s", path)
 	req, err := c.newRequest(ctx, "GET", path, nil)
 	if err != nil {
 		return fmt.Errorf("error creating get request for path %s: %w", path, err)
 	}
+	resp, err := c.httpClient.Do(req)
 
-	_, err = c.do(req, &v)
-	return err
+	if err != nil {
+		return fmt.Errorf("error performing c.httpClient.Do: %w", err)
+	}
+	defer resp.Body.Close()
+
+	return json.NewDecoder(resp.Body).Decode(v)
 }
