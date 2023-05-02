@@ -4,7 +4,7 @@ Go-based client for [Tick's API][tick-api].
 
 [![GoDoc][godoc badge]][godoc link]
 [![Go Report Card][report badge]][report card]
-[![License Badge][license badge]][LICENSE]
+[![License Badge][license badge]][LICENSE.txt]
 
 ## Overview
 
