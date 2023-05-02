@@ -28,8 +28,6 @@ type Project struct {
 	TotalHours    float64 `json:"total_hours,omitempty"`
 }
 
-// FIXME(mdr): This should probably be a map[uint]Project using the Project.ID
-// as the key
 type Projects []Project
 
 type ProjectStatus int

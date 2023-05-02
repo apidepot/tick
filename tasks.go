@@ -52,7 +52,7 @@ func (c Client) GetTasks(ctx context.Context, status TaskStatus) (Tasks, error) 
 		if err != nil {
 			return nil, err
 		}
-		if tasks == nil {
+		if len(tasks) == 0 {
 			foundLastPage = true
 		} else {
 			allTasks = append(allTasks, tasks...)
