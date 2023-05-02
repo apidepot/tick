@@ -6,9 +6,8 @@
 package tick
 
 import (
+	"fmt"
 	"testing"
-
-	c "github.com/smartystreets/goconvey/convey"
 )
 
 const (
@@ -194,18 +193,32 @@ const (
 )
 
 func TestCreatingNewTickSession(t *testing.T) {
-	c.Convey("Given I want to create a new Tick API client", t, func() {
-		c.Convey("When the NewClient function is called with valid variables", func() {
+	testCases := []struct {
+		token string
+		subID string
+		agent string
+	}{
+		{"mytoken", "subID", "thisUserAgent"},
+	}
+	for i, tc := range testCases {
+		name := fmt.Sprintf("new_session_%d", i)
+		t.Run(name, func(t *testing.T) {
 			tick, _ := NewClient("mytoken", "subID", "thisUserAgent")
-			c.Convey("The client should contain the APIToken", func() {
-				c.So(tick.apiToken, c.ShouldEqual, "mytoken")
-			})
-			c.Convey("The client should contain the SubscriptionID", func() {
-				c.So(tick.subscriptionID, c.ShouldEqual, "subID")
-			})
-			c.Convey("The client should contain the UserAgent", func() {
-				c.So(tick.userAgent, c.ShouldEqual, "thisUserAgent")
-			})
+			if tick.apiToken != tc.token {
+				assertString(t, "token", tick.apiToken, tc.token)
+			}
+			if tick.subscriptionID != tc.subID {
+				assertString(t, "subscriptionID", tick.subscriptionID, tc.subID)
+			}
+			if tick.userAgent != tc.agent {
+				assertString(t, "userAgent", tick.userAgent, tc.agent)
+			}
 		})
-	})
+	}
+}
+
+func assertString(t *testing.T, label string, got, want string) {
+	if got != want {
+		t.Errorf("\t got = %s %s\n\t\t\twant = %s", got, label, want)
+	}
 }
