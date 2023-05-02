@@ -73,4 +73,4 @@ Token = "big-hex-string"
 [pull request]: https://help.github.com/articles/using-pull-requests
 [report badge]: https://goreportcard.com/badge/github.com/apidepot/tick
 [report card]: https://goreportcard.com/report/github.com/apidepot/tick
-[tick-api]: https://www.tickspot.com/api
+[tick-api]: https://github.com/tick/tick-api
