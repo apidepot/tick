@@ -42,7 +42,8 @@ const (
 	ClosedTasks
 )
 
-// GetTask uses Tick's API to return a specific Task identified by its ID.
+// GetTask uses Tick's API to return a specific Task identified by its ID along
+// with a summary of entry information.
 func (c Client) GetTask(ctx context.Context, id int) (Task, error) {
 	var task Task
 	path := fmt.Sprintf("/tasks/%d.json", id)
@@ -70,11 +71,11 @@ func (c Client) GetTasks(ctx context.Context, status TaskStatus) (Tasks, error) 
 	return allTasks, nil
 }
 
-// GetProjectTasks uses Tick's API to return all open or closes tasks for a
+// GetTasksInProject uses Tick's API to return all open or closes tasks for a
 // particular project.
-func (c Client) GetProjectTasks(ctx context.Context, status TaskStatus, project string) (Tasks, error) {
+func (c Client) GetTasksInProject(ctx context.Context, status TaskStatus, project string) (Tasks, error) {
 	var tasks Tasks
-	path := pathProjectsTasks(status, project)
+	path := pathTasksInProject(status, project)
 	err := c.get(ctx, path, &tasks)
 	return tasks, err
 }
@@ -86,7 +87,7 @@ func (c Client) getTasksOnPage(ctx context.Context, status TaskStatus, page int)
 	return tasks, err
 }
 
-func pathProjectsTasks(status TaskStatus, project string) string {
+func pathTasksInProject(status TaskStatus, project string) string {
 	if status == ClosedTasks {
 		return fmt.Sprintf("/projects/%s/tasks/closed.json", project)
 	}
